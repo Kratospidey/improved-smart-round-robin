@@ -187,13 +187,14 @@ averages = []
 for case in cases:
     averages.append(smart_round_robin(case))
 
-for process in cases[2]:
-    print(f"{process.pid}:")
+# ! prints the stq & delta value for each round for each process, used for debugging
+# for process in cases[2]:
+#     print(f"{process.pid}:")
 
-    rounds_delta = [f"Round {i + 1}: {delta}" for i, delta in enumerate(process.ds)]
-    rounds_stq = [f"Round {i + 1}: {stq}" for i, stq in enumerate(process.stqs)]
-    print(rounds_stq)
-    print(rounds_delta)
+#     rounds_delta = [f"Round {i + 1}: {delta}" for i, delta in enumerate(process.ds)]
+#     rounds_stq = [f"Round {i + 1}: {stq}" for i, stq in enumerate(process.stqs)]
+#     print(rounds_stq)
+#     print(rounds_delta)
 
 
 expected_research_values = [(37.25, 19), (13.2, 8.2), (98, 51.5), (15.75, 8.25)]
