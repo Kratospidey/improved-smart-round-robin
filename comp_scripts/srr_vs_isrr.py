@@ -66,7 +66,7 @@ def save_reduction_plot(reductions, title, filename, results_dir):
 
 
 # Ensure the results directory exists
-results_dir = "results/SRR_vs_ISRR"
+results_dir = "../results/SRR_vs_ISRR"
 if os.path.isdir(results_dir):
     shutil.rmtree(results_dir)
 os.makedirs(results_dir, exist_ok=True)

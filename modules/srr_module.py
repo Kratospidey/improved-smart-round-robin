@@ -1,6 +1,3 @@
-from math import sqrt, floor
-
-
 class Process:
     def __init__(self, pid, arrival_time, burst_time):
         self.pid = pid
@@ -13,19 +10,16 @@ class Process:
         self.ds = []
 
 
-def calculate_stq_delta(ready_processes):
-    burst_times = [p.remaining_time for p in ready_processes]
-    average_bt = sum(burst_times) / len(burst_times) if burst_times else 0
-    stq = max(1, round(average_bt))  # Ensure STQ is at least 1
-
+def calculate_stq(processes):
     differences = [
-        abs(ready_processes[i].remaining_time - ready_processes[i + 1].remaining_time)
-        for i in range(len(ready_processes) - 1)
+        abs(processes[i].remaining_time - processes[i + 1].remaining_time)
+        for i in range(len(processes) - 1)
     ]
-    delta = max(
-        1, round(sum(differences) / len(differences)) if differences else 0
-    )  # Ensure delta is at least 1
-    return stq, delta
+    return round(sum(differences) / len(differences)) if differences else 0
+
+
+def calculate_delta(stq):
+    return stq // 2
 
 
 def calculate_times(processes):
@@ -40,8 +34,9 @@ def calculate_times(processes):
     return average_tat, average_wt
 
 
-def smart_round_robin(processes):
+def smart_round_robin(processes, print_gantt=False):
     time = 0
+    gantt_chart = ""  # Initialize an empty string to build the Gantt chart
     while any(p.remaining_time > 0 for p in processes):
         # Filter processes that have arrived and have remaining time
         ready_processes = [
@@ -55,12 +50,16 @@ def smart_round_robin(processes):
                 for p in processes
                 if p.remaining_time > 0 and p.arrival_time > time
             )
-            time = next_arrival_time if next_arrival_time > time else time + 1
+            if time < next_arrival_time:
+                # Add idle time to the Gantt chart
+                gantt_chart += f"|{time} IDLE {next_arrival_time}"
+            time = next_arrival_time
             continue
 
         # Calculate STQ and Delta based on ready processes
         ready_processes.sort(key=lambda x: x.remaining_time)
-        stq, delta = calculate_stq_delta(ready_processes)
+        stq = max(calculate_stq(ready_processes), 1)  # STQ should be at least 1
+        delta = calculate_delta(stq)
 
         for process in ready_processes:
             process.stqs.append(stq)
@@ -72,11 +71,18 @@ def smart_round_robin(processes):
                     if process.remaining_time <= stq + delta
                     else stq
                 )
+                start_time = time  # Record the start time for this process
                 process.remaining_time -= cpu_time
                 time += cpu_time
+                # Update the Gantt chart with the process execution
+                gantt_chart += f"|{start_time} {process.pid} {time}"
                 if process.remaining_time == 0:
                     process.finish_time = time
 
+    if print_gantt:
+        print(gantt_chart + "|")  # Print the final Gantt chart only if print_gantt is True
+        print()
+        print()
+        print()
+
     return calculate_times(processes)
-
-
