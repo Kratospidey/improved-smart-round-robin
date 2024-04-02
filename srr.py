@@ -1,4 +1,9 @@
+import argparse
 from modules import srr_module as sm
+
+parser = argparse.ArgumentParser(description="Execute SRR scheduling and optionally print the Gantt chart.")
+parser.add_argument('--print-gantt', action='store_true', help="Print the Gantt chart.")
+args = parser.parse_args()
 
 
 # Test cases
@@ -111,7 +116,7 @@ cases = [
 averages = []
 
 for case in cases:
-    averages.append(sm.smart_round_robin(case))
+    averages.append(sm.smart_round_robin(case, print_gantt=args.print_gantt))
 
 # ! prints the stq & delta value for each round for each process, used for debugging
 # for process in cases[2]:

@@ -1,6 +1,5 @@
 from math import sqrt, floor
 
-
 class Process:
     def __init__(self, pid, arrival_time, burst_time):
         self.pid = pid
@@ -40,7 +39,7 @@ def calculate_times(processes):
     return average_tat, average_wt
 
 
-def smart_round_robin(processes):
+def smart_round_robin(processes, print_gantt=False):
     time = 0
     gantt_chart = ""  # Initialize the Gantt chart string
     while any(p.remaining_time > 0 for p in processes):
@@ -84,9 +83,12 @@ def smart_round_robin(processes):
                 if process.remaining_time == 0:
                     process.finish_time = time
 
-    print(gantt_chart + "|")  # Print the final Gantt chart
-    print()
-    print()
-    print()
+    if print_gantt:
+        print(gantt_chart + "|")  # Print the final Gantt chart only if print_gantt is True
+        print()
+        print()
+        print()
+
+
 
     return calculate_times(processes)

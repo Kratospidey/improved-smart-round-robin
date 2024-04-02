@@ -1,4 +1,9 @@
+import argparse
 from modules import isrr_module as im
+
+parser = argparse.ArgumentParser(description="Execute ISRR scheduling and optionally print the Gantt chart.")
+parser.add_argument('--print-gantt', action='store_true', help="Print the Gantt chart.")
+args = parser.parse_args()
 
 
 # Test cases
@@ -111,16 +116,16 @@ cases = [
 averages = []
 
 for case in cases:
-    averages.append(im.smart_round_robin(case))
+    averages.append(im.smart_round_robin(case, print_gantt=args.print_gantt))
 
 # ! prints the stq & delta value for each round for each process, used for debugging
-for process in cases[1]:
-    print(f"{process.pid}:")
+# for process in cases[1]:
+#     print(f"{process.pid}:")
 
-    rounds_delta = [f"Round {i + 1}: {delta}" for i, delta in enumerate(process.ds)]
-    rounds_stq = [f"Round {i + 1}: {stq}" for i, stq in enumerate(process.stqs)]
-    print(rounds_stq)
-    print(rounds_delta)
+#     rounds_delta = [f"Round {i + 1}: {delta}" for i, delta in enumerate(process.ds)]
+#     rounds_stq = [f"Round {i + 1}: {stq}" for i, stq in enumerate(process.stqs)]
+#     print(rounds_stq)
+#     print(rounds_delta)
 
 
 expected_research_values = [(37.25, 19), (13.2, 8.2), (98, 51.5), (15.75, 8.25)]
