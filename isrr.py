@@ -42,6 +42,7 @@ def calculate_times(processes):
 
 def smart_round_robin(processes):
     time = 0
+    gantt_chart = ""  # Initialize the Gantt chart string
     while any(p.remaining_time > 0 for p in processes):
         # Filter processes that have arrived and have remaining time
         ready_processes = [
@@ -55,7 +56,10 @@ def smart_round_robin(processes):
                 for p in processes
                 if p.remaining_time > 0 and p.arrival_time > time
             )
-            time = next_arrival_time if next_arrival_time > time else time + 1
+            # Add idle time to the Gantt chart if there is a gap
+            if time < next_arrival_time:
+                gantt_chart += f"|{time} IDLE {next_arrival_time}"
+            time = next_arrival_time
             continue
 
         # Calculate STQ and Delta based on ready processes
@@ -72,10 +76,18 @@ def smart_round_robin(processes):
                     if process.remaining_time <= stq + delta
                     else stq
                 )
+                start_time = time  # Record the start time for this process
                 process.remaining_time -= cpu_time
                 time += cpu_time
+                # Update the Gantt chart with the process execution
+                gantt_chart += f"|{start_time} {process.pid} {time}"
                 if process.remaining_time == 0:
                     process.finish_time = time
+
+    print(gantt_chart + "|")  # Print the final Gantt chart
+    print()
+    print()
+    print()
 
     return calculate_times(processes)
 
@@ -192,7 +204,8 @@ averages = []
 for case in cases:
     averages.append(smart_round_robin(case))
 
-for process in cases[2]:
+# ! prints the stq & delta value for each round for each process, used for debugging
+for process in cases[1]:
     print(f"{process.pid}:")
 
     rounds_delta = [f"Round {i + 1}: {delta}" for i, delta in enumerate(process.ds)]
@@ -212,6 +225,7 @@ expected_class_values = [
 research_cases_results = averages[:4]
 class_problem_results = averages[4:6]
 random_cases_results = averages[6:]
+
 
 # Display the results of Research Paper Cases
 print(f"\033[91mResearch Paper Cases:\033[0m")
