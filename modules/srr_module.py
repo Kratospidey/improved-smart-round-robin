@@ -36,6 +36,7 @@ def calculate_times(processes):
 
 def smart_round_robin(processes):
     time = 0
+    gantt_chart = ""  # Initialize an empty string to build the Gantt chart
     while any(p.remaining_time > 0 for p in processes):
         # Filter processes that have arrived and have remaining time
         ready_processes = [
@@ -49,7 +50,10 @@ def smart_round_robin(processes):
                 for p in processes
                 if p.remaining_time > 0 and p.arrival_time > time
             )
-            time = next_arrival_time if next_arrival_time > time else time + 1
+            if time < next_arrival_time:
+                # Add idle time to the Gantt chart
+                gantt_chart += f"|{time} IDLE {next_arrival_time}"
+            time = next_arrival_time
             continue
 
         # Calculate STQ and Delta based on ready processes
@@ -67,9 +71,17 @@ def smart_round_robin(processes):
                     if process.remaining_time <= stq + delta
                     else stq
                 )
+                start_time = time  # Record the start time for this process
                 process.remaining_time -= cpu_time
                 time += cpu_time
+                # Update the Gantt chart with the process execution
+                gantt_chart += f"|{start_time} {process.pid} {time}"
                 if process.remaining_time == 0:
                     process.finish_time = time
+
+    print(gantt_chart + "|")  # Print the final Gantt chart
+    # print()
+    # print()
+    # print()
 
     return calculate_times(processes)

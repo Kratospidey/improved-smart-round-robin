@@ -40,6 +40,7 @@ def save_individual_comparison_plot(
     fig.savefig(os.path.join(results_dir, f"Case_{case_number}_comparison.png"))
     plt.close(fig)
 
+
 # Function to save cumulative reduction plots with dense striped hatch pattern
 def save_reduction_plot(reductions, title, filename, results_dir):
     labels = ["Case I", "Case II", "Case III", "Case IV", "Overall"]
@@ -76,7 +77,7 @@ def save_reduction_plot(reductions, title, filename, results_dir):
 
 
 # Ensure the results directory exists
-results_dir = "results/TRR_vs_SRR"
+results_dir = "../results/TRR_vs_SRR"
 if os.path.isdir(results_dir):
     shutil.rmtree(results_dir)
 os.makedirs(results_dir, exist_ok=True)

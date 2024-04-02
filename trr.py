@@ -1,4 +1,5 @@
-import trr_module as tm
+from modules import trr_module as tm
+
 
 # Test cases
 

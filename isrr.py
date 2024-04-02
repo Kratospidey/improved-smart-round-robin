@@ -1,4 +1,5 @@
-import isrr_module as im
+from modules import isrr_module as im
+
 
 # Test cases
 # Format is Process(PID, AT, BT)
