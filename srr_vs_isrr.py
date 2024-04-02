@@ -3,33 +3,23 @@ import numpy as np
 import os
 import shutil
 
-# Dummy results for TRR and SRR
-trr_results = [(51.0, 32.75), (15.6, 10.6), (124.5, 78.0), (19.5, 12.0)]
+# Dummy results for SRR and ISRR
 srr_results = [(37.25, 19.00), (13.20, 8.20), (98.00, 51.50), (15.75, 8.25)]
-
-# Time quantums for TRR cases, replace these with your actual values
-time_quantums = [6, 4, 20, 2]
-
+isrr_results = [(35.00, 16.75), (11.60, 6.60), (84.50, 38.00), (14.50, 7.00)]
 
 # Function to save individual comparison plots with dynamic time quantum
 def save_individual_comparison_plot(
-    case_number, trr_tat, srr_tat, trr_wt, srr_wt, time_quantum, results_dir
+    case_number, srr_tat, isrr_tat, srr_wt, isrr_wt, results_dir
 ):
     labels = ["Average Turnaround time", "Average Waiting Time"]
-    trr_values = [trr_tat, trr_wt]
     srr_values = [srr_tat, srr_wt]
+    isrr_values = [isrr_tat, isrr_wt]
     x = np.arange(len(labels))
     width = 0.35
 
     fig, ax = plt.subplots()
-    rects1 = ax.bar(
-        x - width / 2,
-        trr_values,
-        width,
-        label=f"TRR (Q={time_quantum})",
-        color="#4472c4",
-    )
-    rects2 = ax.bar(x + width / 2, srr_values, width, label="SRR", color="#ed7d31")
+    rects1 = ax.bar(x - width / 2, srr_values, width, label=f"SRR", color="#4472c4")
+    rects2 = ax.bar(x + width / 2, isrr_values, width, label="ISRR", color="#ed7d31")
     ax.set_ylabel("Time")
     ax.set_title(f"Case {case_number} Comparison")
     ax.set_xticks(x)
@@ -76,20 +66,20 @@ def save_reduction_plot(reductions, title, filename, results_dir):
 
 
 # Ensure the results directory exists
-results_dir = "results/TRR_vs_SRR"
+results_dir = "results/SRR_vs_ISRR"
 if os.path.isdir(results_dir):
     shutil.rmtree(results_dir)
 os.makedirs(results_dir, exist_ok=True)
 
 # Save individual comparison plots for each case
-for i, ((trr_tat, trr_wt), (srr_tat, srr_wt), tq) in enumerate(
-    zip(trr_results, srr_results, time_quantums), start=1
+for i, ((srr_tat, srr_wt), (isrr_tat, isrr_wt)) in enumerate(
+    zip(srr_results, isrr_results), start=1
 ):
     save_individual_comparison_plot(
-        i, trr_tat, srr_tat, trr_wt, srr_wt, tq, results_dir
+        i, srr_tat, isrr_tat, srr_wt, isrr_wt, results_dir
     )
 
-# Dummy reductions for ATAT and AWT from TRR to SRR
+# Dummy reductions for ATAT and AWT from sRR to iSRR
 reductions_atat = [26.96, 15.38, 21.28, 34.615, 24.559]
 reductions_awt = [41.98, 18.86, 33.97, 32.65, 31.865]
 
