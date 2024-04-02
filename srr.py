@@ -134,53 +134,54 @@ research_cases_results = averages[:4]
 class_problem_results = averages[4:6]
 random_cases_results = averages[6:]
 
-# Display the results of Research Paper Cases
-print(f"\033[91mResearch Paper Cases:\033[0m")
-for i, (atat, awt) in enumerate(research_cases_results, start=1):
-    print()
-    print(f"\033[92mCase {i}:\033[0m")
-    print(
-        f"Case {i}: Expected Turnaround Time (TAT): {expected_research_values[i-1][0]}, Expected Waiting Time (WT): {expected_research_values[i-1][1]}"
-    )
-    print()
-    print(
-        f"Case {i}: Average Turnaround Time (ATAT) = {atat:.2f}, Average Waiting Time (AWT) = {awt:.2f}"
-    )
-    print(
-        "-----------------------------------------------------------------------------------------------------------------"
-    )
+# ! uncomment out below other stuff later
 
+# # Display the results of Research Paper Cases
+# print(f"\033[91mResearch Paper Cases:\033[0m")
+# for i, (atat, awt) in enumerate(research_cases_results, start=1):
+#     print()
+#     print(f"\033[92mCase {i}:\033[0m")
+#     print(
+#         f"Case {i}: Expected Turnaround Time (TAT): {expected_research_values[i-1][0]}, Expected Waiting Time (WT): {expected_research_values[i-1][1]}"
+#     )
+#     print()
+#     print(
+#         f"Case {i}: Average Turnaround Time (ATAT) = {atat:.2f}, Average Waiting Time (AWT) = {awt:.2f}"
+#     )
+#     print(
+#         "-----------------------------------------------------------------------------------------------------------------"
+#     )
 
-print()
-print()
-print()
-# Display the results of Class Problems
-print(f"\033[91mClass Problems:\033[0m")
-for i, (atat, awt) in enumerate(class_problem_results, start=1):
-    print()
-    print(f"\033[92mCase {i}:\033[0m")
-    print(
-        f"Case {i}: Expected Turnaround Time (TAT): {expected_class_values[i-1][0]}, Expected Waiting Time (WT): {expected_class_values[i-1][1]}"
-    )
-    print()
-    print(
-        f"Case {i}: Average Turnaround Time (ATAT) = {atat:.2f}, Average Waiting Time (AWT) = {awt:.2f}"
-    )
-    print(
-        "-----------------------------------------------------------------------------------------------------------------"
-    )
+# print()
+# print()
+# print()
+# # Display the results of Class Problems
+# print(f"\033[91mClass Problems:\033[0m")
+# for i, (atat, awt) in enumerate(class_problem_results, start=1):
+#     print()
+#     print(f"\033[92mCase {i}:\033[0m")
+#     print(
+#         f"Case {i}: Expected Turnaround Time (TAT): {expected_class_values[i-1][0]}, Expected Waiting Time (WT): {expected_class_values[i-1][1]}"
+#     )
+#     print()
+#     print(
+#         f"Case {i}: Average Turnaround Time (ATAT) = {atat:.2f}, Average Waiting Time (AWT) = {awt:.2f}"
+#     )
+#     print(
+#         "-----------------------------------------------------------------------------------------------------------------"
+#     )
 
-if random_cases_results:
-    print()
-    print()
-    print()
-    # Display the results of Random Test Cases
-    print(f"\033[91mRandom Test Cases:\033[0m")
-    for i, (atat, awt) in enumerate(random_cases_results, start=1):
-        print()
-        print(
-            f"Case {i}: Average Turnaround Time (ATAT) = {atat:.2f}, Average Waiting Time (AWT) = {awt:.2f}"
-        )
-        print(
-            "-----------------------------------------------------------------------------------------------------------------"
-        )
+# if random_cases_results:
+#     print()
+#     print()
+#     print()
+#     # Display the results of Random Test Cases
+#     print(f"\033[91mRandom Test Cases:\033[0m")
+#     for i, (atat, awt) in enumerate(random_cases_results, start=1):
+#         print()
+#         print(
+#             f"Case {i}: Average Turnaround Time (ATAT) = {atat:.2f}, Average Waiting Time (AWT) = {awt:.2f}"
+#         )
+#         print(
+#             "-----------------------------------------------------------------------------------------------------------------"
+#         )

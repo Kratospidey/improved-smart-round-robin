@@ -112,7 +112,8 @@ averages = []
 for case in cases:
     averages.append(im.smart_round_robin(case))
 
-for process in cases[2]:
+# ! prints the stq & delta value for each round for each process, used for debugging
+for process in cases[1]:
     print(f"{process.pid}:")
 
     rounds_delta = [f"Round {i + 1}: {delta}" for i, delta in enumerate(process.ds)]
@@ -132,6 +133,7 @@ expected_class_values = [
 research_cases_results = averages[:4]
 class_problem_results = averages[4:6]
 random_cases_results = averages[6:]
+
 
 # Display the results of Research Paper Cases
 print(f"\033[91mResearch Paper Cases:\033[0m")
