@@ -1,6 +1,8 @@
 import argparse
 from modules import isrr_module as im
 
+# Enables printing gantt charts optionally
+# Usage: python isrr.py --print-gantt
 parser = argparse.ArgumentParser(description="Execute ISRR scheduling and optionally print the Gantt chart.")
 parser.add_argument('--print-gantt', action='store_true', help="Print the Gantt chart.")
 args = parser.parse_args()
@@ -54,13 +56,29 @@ cases = [
     ],
     # Random Test Cases
     # Small number of processes, small burst times, same ATs
-    [im.Process("P1", 0, 4), im.Process("P2", 0, 5), im.Process("P3", 0, 3)],
+    [
+        im.Process("P1", 0, 4), 
+        im.Process("P2", 0, 5), 
+        im.Process("P3", 0, 3)
+    ],
     # Small number of im.processes, large burst times, same ATs
-    [im.Process("P1", 0, 40), im.Process("P2", 0, 50), im.Process("P3", 0, 30)],
-    # Small number of im.processes, small burst times, small diff in ATs
-    [im.Process("P1", 1, 4), im.Process("P2", 2, 5), im.Process("P3", 3, 3)],
+    [
+        im.Process("P1", 0, 40), 
+        im.Process("P2", 0, 50), 
+        im.Process("P3", 0, 30)
+    ],
+    # Small number of processes, small burst times, small diff in ATs
+    [
+        im.Process("P1", 1, 4), 
+        im.Process("P2", 2, 5), 
+        im.Process("P3", 3, 3)
+    ],
     # Small number of processes, small burst times, large diff in ATs
-    [im.Process("P1", 1, 4), im.Process("P2", 10, 5), im.Process("P3", 20, 3)],
+    [
+        im.Process("P1", 1, 4), 
+        im.Process("P2", 10, 5), 
+        im.Process("P3", 20, 3)
+    ],
     # Large number of processes, small burst times, same ATs
     [
         im.Process("P1", 0, 3),
@@ -110,12 +128,22 @@ cases = [
         im.Process("P5", 8, 10),
         im.Process("P6", 10, 5),
         im.Process("P7", 12, 20),
-    ],
+    ]
 ]
 
-averages = []
+averages = [] # Stores Average Turn Around Times, and Average Waiting Times
 
-for case in cases:
+for i,case in enumerate(cases):
+    # Runs Improved Smart Round Robin Algorithm on each case
+    if i < 4:
+        print("Research Paper Cases:")
+        print(f"Case {i + 1}:")
+    elif i < 6:
+        print("Class Problems:")
+        print(f"Case {(i - 4) + 1}:")
+    else:
+        print("Random Test Cases:")
+        print(f"Case {(i - 6) + 1}:")
     averages.append(im.smart_round_robin(case, print_gantt=args.print_gantt))
 
 # ! prints the stq & delta value for each round for each process, used for debugging
@@ -127,19 +155,19 @@ for case in cases:
 #     print(rounds_stq)
 #     print(rounds_delta)
 
-
+# Stores SRR results against which ISRR results can be compared
 expected_research_values = [(37.25, 19), (13.2, 8.2), (98, 51.5), (15.75, 8.25)]
 
+# Stores Normal Round Robin results for Class Problems against which ISRR results can be compared
 expected_class_values = [
     # These were calculated in class
     (10.833, 7.333),
     (21.33, 16.00),
 ]
 
-research_cases_results = averages[:4]
-class_problem_results = averages[4:6]
-random_cases_results = averages[6:]
-
+research_cases_results = averages[:4] # First 4 results are research paper results
+class_problem_results = averages[4:6] # 5th and 6th results are class problem results
+random_cases_results = averages[6:] # First 7th result onwards are random test case results
 
 # Display the results of Research Paper Cases
 print(f"\033[91mResearch Paper Cases:\033[0m")
