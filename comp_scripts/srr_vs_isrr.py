@@ -15,11 +15,32 @@ def save_individual_comparison_plot(
     srr_values = [srr_tat, srr_wt]
     isrr_values = [isrr_tat, isrr_wt]
     x = np.arange(len(labels))
-    width = 0.35
+    width = 0.35  # the width of the bars
+    gap = 0.1     # the gap between the bars
 
     fig, ax = plt.subplots()
-    rects1 = ax.bar(x - width / 2, srr_values, width, label=f"SRR", color="#4472c4")
-    rects2 = ax.bar(x + width / 2, isrr_values, width, label="ISRR", color="#ed7d31")
+    rects1 = ax.bar(x - (width / 2 + gap / 2), srr_values, width, label="SRR", color="#4472c4")
+    rects2 = ax.bar(x + (width / 2 + gap / 2), isrr_values, width, label="ISRR", color="#ed7d31")
+
+    # Add data labels on top of the bars
+    def add_labels(rects):
+        for rect in rects:
+            height = rect.get_height()
+            ax.annotate(
+                f'{height:.2f}',
+                xy=(rect.get_x() + rect.get_width() / 2, height),
+                xytext=(0, 3),  # 3 points vertical offset
+                textcoords="offset points",
+                ha='center', va='bottom'
+            )
+
+    add_labels(rects1)
+    add_labels(rects2)
+
+    # Add horizontal grid lines at intervals of 10
+    ax.yaxis.grid(True, which='major', linestyle='--', linewidth=0.5)
+    ax.set_yticks(np.arange(0, max(srr_values + isrr_values) + 10, 10))
+
     ax.set_ylabel("Time")
     ax.set_title(f"Case {case_number} Comparison")
     ax.set_xticks(x)
@@ -80,8 +101,20 @@ for i, ((srr_tat, srr_wt), (isrr_tat, isrr_wt)) in enumerate(
     )
 
 # Dummy reductions for ATAT and AWT from sRR to iSRR
-reductions_atat = [26.96, 15.38, 21.28, 34.615, 24.559]
-reductions_awt = [41.98, 18.86, 33.97, 32.65, 31.865]
+def calculate_reduction(srr, isrr):
+    return ((srr - isrr) / srr) * 100
+
+# Calculate the reductions for each case
+reductions_atat = [calculate_reduction(srr[0], isrr[0]) for srr, isrr in zip(srr_results, isrr_results)]
+reductions_awt = [calculate_reduction(srr[1], isrr[1]) for srr, isrr in zip(srr_results, isrr_results)]
+
+# Calculate the overall reductions
+overall_reduction_atat = calculate_reduction(sum([x[0] for x in srr_results]), sum([x[0] for x in isrr_results]))
+overall_reduction_awt = calculate_reduction(sum([x[1] for x in srr_results]), sum([x[1] for x in isrr_results]))
+
+# Add the overall reduction to the list
+reductions_atat.append(overall_reduction_atat)
+reductions_awt.append(overall_reduction_awt)
 
 # Save cumulative reduction plots
 save_reduction_plot(

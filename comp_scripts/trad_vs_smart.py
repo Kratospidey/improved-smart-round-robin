@@ -18,26 +18,54 @@ def save_individual_comparison_plot(
     labels = ["Average Turnaround time", "Average Waiting Time"]
     trr_values = [trr_tat, trr_wt]
     srr_values = [srr_tat, srr_wt]
-    x = np.arange(len(labels))
-    width = 0.35
+    x = np.arange(len(labels))  # the label locations
+    width = 0.35  # the width of the bars
+    gap = 0.05  # the gap width between bars in a pair
 
     fig, ax = plt.subplots()
     rects1 = ax.bar(
-        x - width / 2,
+        x - (width / 2 + gap / 2),
         trr_values,
         width,
         label=f"TRR (Q={time_quantum})",
         color="#4472c4",
     )
-    rects2 = ax.bar(x + width / 2, srr_values, width, label="SRR", color="#ed7d31")
-    ax.set_ylabel("Time")
-    ax.set_title(f"Case {case_number} Comparison")
+    rects2 = ax.bar(
+        x + (width / 2 + gap / 2),
+        srr_values,
+        width,
+        label="SRR",
+        color="#ed7d31",
+    )
+
+    # Add data labels on top of the bars
+    def add_labels(rects):
+        for rect in rects:
+            height = rect.get_height()
+            ax.annotate(
+                f'{height:.2f}',
+                xy=(rect.get_x() + rect.get_width() / 2, height),
+                xytext=(0, 3),  # 3 points vertical offset
+                textcoords="offset points",
+                ha='center', va='bottom'
+            )
+
+    add_labels(rects1)
+    add_labels(rects2)
+
+    # Add y-axis grid lines at intervals of 10
+    ax.yaxis.grid(True, which='both', linestyle='--', linewidth=0.5)
+    ax.set_yticks(np.arange(0, max(trr_values + srr_values) + 10, 10))
+
+    # Set the rest of the labels and title
+    ax.set_ylabel('Time')
+    ax.set_title(f'Case {case_number} Comparison')
     ax.set_xticks(x)
     ax.set_xticklabels(labels)
     ax.legend()
 
     # Save the plot to a file
-    fig.savefig(os.path.join(results_dir, f"Case_{case_number}_comparison.png"))
+    fig.savefig(os.path.join(results_dir, f'Case_{case_number}_comparison.png'))
     plt.close(fig)
 
 
