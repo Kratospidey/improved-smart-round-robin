@@ -1,0 +1,125 @@
+import matplotlib.pyplot as plt
+import numpy as np
+import os
+import shutil
+
+# Dummy results for TRR, SRR, and ISRR
+trr_results = [(51.0, 32.75), (15.6, 10.6), (124.5, 78.0), (19.5, 12.0)]
+srr_results = [(37.25, 19.00), (13.20, 8.20), (98.00, 51.50), (15.75, 8.25)]
+isrr_results = [(35.00, 16.75), (11.60, 6.60), (84.50, 38.00), (14.50, 7.00)]
+
+# Time quantums for TRR cases
+time_quantums = [6, 4, 20, 2]
+
+# Ensure the results directory exists
+results_dir = "../results/TRR_vs_SRR_vs_ISRR"
+if os.path.isdir(results_dir):
+    shutil.rmtree(results_dir)
+os.makedirs(results_dir, exist_ok=True)
+
+
+def save_comparative_plot(case_number, trr, srr, isrr, time_quantum, results_dir):
+    labels = ["Average Turnaround time", "Average Waiting Time"]
+    x = np.arange(len(labels))
+    width = 0.25
+
+    fig, ax = plt.subplots()
+    ax.bar(x - width, trr, width, label=f"TRR (Q={time_quantum})", color="#4472C4")
+    ax.bar(x, srr, width, label="SRR", color="#ED7D31")
+    ax.bar(x + width, isrr, width, label="ISRR", color="#A5A5A5")
+
+    ax.set_ylabel("Time")
+    ax.set_title(f"Case {case_number} Comparison")
+    ax.set_xticks(x)
+    ax.set_xticklabels(labels)
+    ax.legend()
+
+    fig.savefig(os.path.join(results_dir, f"Case_{case_number}_comparison.png"))
+    plt.close(fig)
+
+
+for i, ((trr_tat, trr_wt), (srr_tat, srr_wt), (isrr_tat, isrr_wt), tq) in enumerate(
+    zip(trr_results, srr_results, isrr_results, time_quantums), start=1
+):
+    save_comparative_plot(
+        i, [trr_tat, trr_wt], [srr_tat, srr_wt], [isrr_tat, isrr_wt], tq, results_dir
+    )
+
+
+def calculate_reduction(trr, val):
+    return ((trr - val) / trr) * 100
+
+
+# Calculate reductions for ATAT and AWT from TRR to SRR and ISRR
+atat_reductions_srr = [
+    calculate_reduction(trr[0], srr[0]) for trr, srr in zip(trr_results, srr_results)
+]
+atat_reductions_isrr = [
+    calculate_reduction(trr[0], isrr[0]) for trr, isrr in zip(trr_results, isrr_results)
+]
+awt_reductions_srr = [
+    calculate_reduction(trr[1], srr[1]) for trr, srr in zip(trr_results, srr_results)
+]
+awt_reductions_isrr = [
+    calculate_reduction(trr[1], isrr[1]) for trr, isrr in zip(trr_results, isrr_results)
+]
+
+
+def save_reduction_plot(reductions1, reductions2, labels, title, filename, results_dir):
+    plt.figure(figsize=(10, 6))  # Larger figure size
+    fig, ax = plt.subplots()
+    x = np.arange(len(labels))
+    width = 0.35
+    rects1 = ax.bar(
+        x - width / 2, reductions1, width, label="TRR to SRR", color="#4472C4"
+    )
+    rects2 = ax.bar(
+        x + width / 2, reductions2, width, label="TRR to ISRR", color="#ED7D31"
+    )
+
+    ax.set_ylabel("Reduction (%)")
+    ax.set_title(title)
+    ax.set_xticks(x)
+    ax.set_xticklabels(labels)
+    ax.legend()
+
+    # Annotate bars with percentage values
+    def add_labels(rects):
+        for rect in rects:
+            height = rect.get_height()
+            ax.annotate(
+                f"{height:.2f}%",
+                xy=(rect.get_x() + rect.get_width() / 2, height),
+                xytext=(0, 5),  # 3 points vertical offset
+                textcoords="offset points",
+                ha="center",
+                va="bottom",
+            )
+
+    add_labels(rects1)
+    add_labels(rects2)
+
+    fig.savefig(os.path.join(results_dir, filename))
+    plt.close(fig)
+
+
+# Save the two separate reduction plots
+save_reduction_plot(
+    atat_reductions_srr,
+    atat_reductions_isrr,
+    ["Case I", "Case II", "Case III", "Case IV"],
+    "ATAT Reduction Comparison",
+    "Reduction_ATAT.png",
+    results_dir,
+)
+
+save_reduction_plot(
+    awt_reductions_srr,
+    awt_reductions_isrr,
+    ["Case I", "Case II", "Case III", "Case IV"],
+    "AWT Reduction Comparison",
+    "Reduction_AWT.png",
+    results_dir,
+)
+
+print("Graphs have been saved to:", os.path.abspath(results_dir))
