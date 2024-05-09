@@ -4,12 +4,12 @@ import os
 import shutil
 
 # Dummy results for TRR, SRR, and ISRR
-trr_results = [(51.0, 32.75), (15.6, 10.6), (124.5, 78.0), (19.5, 12.0)]
-srr_results = [(37.25, 19.00), (13.20, 8.20), (98.00, 51.50), (15.75, 8.25)]
-isrr_results = [(35.00, 16.75), (11.60, 6.60), (84.50, 38.00), (14.50, 7.00)]
+trr_results = [(51.0, 32.75), (124.5, 78.0), (19.5, 12.0)]
+srr_results = [(37.25, 19.00), (98.00, 51.50), (15.75, 8.25)]
+isrr_results = [(35.00, 16.75), (84.50, 38.00), (14.50, 7.00)]
 
 # Time quantums for TRR cases
-time_quantums = [6, 4, 20, 2]
+time_quantums = [6, 20, 2]
 
 # Ensure the results directory exists
 results_dir = "../results/TRR_vs_SRR_vs_ISRR"
@@ -23,7 +23,7 @@ def save_comparative_plot(case_number, trr, srr, isrr, time_quantum, results_dir
     x = np.arange(len(labels))
     width = 0.25
 
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=(8, 5))  # Adjusting figure size
     ax.bar(x - width, trr, width, label=f"TRR (Q={time_quantum})", color="#4472C4")
     ax.bar(x, srr, width, label="SRR", color="#ED7D31")
     ax.bar(x + width, isrr, width, label="ISRR", color="#A5A5A5")
@@ -90,10 +90,11 @@ def save_reduction_plot(reductions1, reductions2, labels, title, filename, resul
             ax.annotate(
                 f"{height:.2f}%",
                 xy=(rect.get_x() + rect.get_width() / 2, height),
-                xytext=(0, 5),  # 3 points vertical offset
+                xytext=(0, 3),  # 3 points vertical offset
                 textcoords="offset points",
                 ha="center",
                 va="bottom",
+                fontsize=9,  # Increasing font size
             )
 
     add_labels(rects1)
@@ -107,7 +108,7 @@ def save_reduction_plot(reductions1, reductions2, labels, title, filename, resul
 save_reduction_plot(
     atat_reductions_srr,
     atat_reductions_isrr,
-    ["Case I", "Case II", "Case III", "Case IV"],
+    ["Case I", "Case II", "Case III"],
     "ATAT Reduction Comparison",
     "Reduction_ATAT.png",
     results_dir,
@@ -116,10 +117,58 @@ save_reduction_plot(
 save_reduction_plot(
     awt_reductions_srr,
     awt_reductions_isrr,
-    ["Case I", "Case II", "Case III", "Case IV"],
+    ["Case I", "Case II", "Case III"],
     "AWT Reduction Comparison",
     "Reduction_AWT.png",
     results_dir,
 )
 
+# Context switches for ISRR and SRR
+isrr_context_switches = [3, 3, 3]
+srr_context_switches = [5, 9, 7]
+
+def save_context_switch_comparison_plot(isrr_data, srr_data, labels, title, filename, results_dir):
+    plt.figure(figsize=(8, 5))  # Matching the previous figure sizes
+    fig, ax = plt.subplots()
+    x = np.arange(len(labels))
+    width = 0.35
+    rects1 = ax.bar(x - width / 2, isrr_data, width, label="ISRR", color="#A5A5A5")
+    rects2 = ax.bar(x + width / 2, srr_data, width, label="SRR", color="#ED7D31")
+
+    ax.set_ylabel("Context Switches")
+    ax.set_title(title)
+    ax.set_xticks(x)
+    ax.set_xticklabels(labels)
+    ax.legend()
+
+    # Annotate bars with values
+    def add_labels(rects):
+        for rect in rects:
+            height = rect.get_height()
+            ax.annotate(f"{height}",
+                        xy=(rect.get_x() + rect.get_width() / 2, height),
+                        xytext=(0, 3),  # 3 points vertical offset
+                        textcoords="offset points",
+                        ha="center",
+                        va="bottom",
+                        fontsize=9)
+
+    add_labels(rects1)
+    add_labels(rects2)
+
+    fig.savefig(os.path.join(results_dir, filename))
+    plt.close(fig)
+
+# Create and save the context switch comparison plot
+save_context_switch_comparison_plot(
+    isrr_context_switches,
+    srr_context_switches,
+    ["Case I", "Case II", "Case III"],
+    "Context Switch Comparison",
+    "Context_Switch_Comparison.png",
+    results_dir
+)
+
+
 print("Graphs have been saved to:", os.path.abspath(results_dir))
+
